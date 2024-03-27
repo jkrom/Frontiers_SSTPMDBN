@@ -2,12 +2,8 @@
 # written by: Justus Kromer
 ##################################
 #
-#	content:
+#		simulation script to gen initial networks and simulate until a stationary state is reached
 #
-#		simulation script to gen initial networks and simulate until a stationary state is reaced, indices are aranged according to x direction
-#
-#	run: python get_stationary_dynamics_synaptic_lengthscale.py outputDirectory initialSeed d_synaptic_length_scale
-
 # imports
 import numpy as np 
 import numexpr as ne
@@ -15,11 +11,8 @@ import os
 from scipy.sparse import csc_matrix, csr_matrix
 import scipy.sparse
 import scipy
-
 import sys
-
 sys.path.append( 'functions' )
-
 import functions_genNetwork
 import functions_sim
 import functions_pars
@@ -36,7 +29,7 @@ import functions_pars
 # load shell input
 outputDirectory 		= sys.argv[1]
 initialSeed 			= int(sys.argv[2])
-d_synaptic_length_scale = float(sys.argv[3])
+d_synaptic_length_scale         = float(sys.argv[3])
 initialMeanWeight 		= float(sys.argv[4])
 
 # create a complete backup at the following times
@@ -45,7 +38,6 @@ TBackupSteps = np.arange(0,25000,1000) # sec
 #############################################
 ## load parameter set
 system_parameters = functions_pars.gen_Parameter_set_Sequence_Paper( initialSeed )
-
 ## set initial mean weight
 system_parameters['cExcInit'] = initialMeanWeight*system_parameters['cMaxExc'] 
 ## set simulation time
@@ -55,7 +47,6 @@ system_parameters['d_mm'] = d_synaptic_length_scale # mm
 #############################################
 ## set seed of random number generator
 np.random.seed( system_parameters['initialSeed'] )
-
 
 #############################################
 ## initializes system
@@ -89,9 +80,6 @@ maxNumberOfPreSynapticNeurons, maxNumberOfPostSynapticNeurons, numpyPreSynapticN
 outputFolder = functions_sim.create_outputFolder( outputDirectory  )
 # save parameter set
 np.save(outputFolder+'/parameterSet.npy', system_parameters) 
-
-
-
 
 ################################################################
 # initialize output data
@@ -155,7 +143,7 @@ for kStep in range( nSteps ):
 			myfile.write(str(kStep)+' '+str(int((kStep*0.001+1)*dt))+'_sec'+'\n')
 			myfile.close()
 
-    # mean synaptic weight is calculated every 'kWeightOutput' time steps
+        # mean synaptic weight is calculated every 'kWeightOutput' time steps
 	if kStep % kWeightOutput == 0:	
 		# first column is time step, second column mean recurrent STN weight, third column mean recurrent GPe weigth, fourth column mean STN -> GPe weight, and fifth column mean GPe -> STN weight
 		meanWeightTimeSeries[int( float(kStep % kSave)/float(kWeightOutput)),:]=np.array( [kStep, np.mean(cMatrix[:N_STN,:N_STN]), np.mean(cMatrix[N_STN:,N_STN:]) , np.mean(cMatrix[N_STN:,:N_STN]) , np.mean(cMatrix[:N_STN,N_STN:]) ] )
@@ -208,14 +196,12 @@ for kStep in range( nSteps ):
 	# spikeArrival[ currentSlotInSpikeArrival ] cotains the number of arriving spikes, i.e. 0, 1, ...
 	Snoise+=noiseIntensities/tauNoise*spikeArrival[ currentSlotInSpikeArrival ]
 
-	
 	##################################################
 	# evaluate threshold crossing
 	# get indices of neurons that chrossed the spiking threshold
 	passedThreshold=NeuronIndices[np.logical_and( v > VT, v<borderForScaningNeuronsPassingSpikingThreshold)]
 	# get number of such neurons
 	numberOfSpikingNeurons=len(passedThreshold)
-
 
 	##################################################
 	# evaluate spiking neurons
@@ -260,8 +246,6 @@ for kStep in range( nSteps ):
 		activatedSynconnections[:,2]=transmissionDelaysPostSynNeurons[passedThreshold].reshape(len(passedThreshold)*maxNumberOfPostSynapticNeurons)	
 		# delete zero elements (theire delays are set to -1)
 		activatedSynconnections=activatedSynconnections[activatedSynconnections[:,2]!=-1]
-
-
 
 		# sort synapses accroding to their delays
 		# FIXME: it is important that the three delays differ, i.e. StepsTauSynDelaySTNSTN !=  StepsTauSynDelayGPeGPe != StepsTauSynDelaySTNGPe
@@ -315,7 +299,6 @@ for kStep in range( nSteps ):
 			# update weight matrix
 			cMatrix+= weigthUpdatesPre 
 
-
 	##################################################
 	# evaluate spikes that arrive at the synapse 
 	# 2) neurons that are just spiking
@@ -364,7 +347,6 @@ for kStep in range( nSteps ):
 			# update weight matrix			
 			cMatrix+= weigthUpdatesPost 
 
-
 	##################################################
 	# apply the hard bounds and keep weights between 0 and 1		
 	# apply hard bounds
@@ -384,7 +366,6 @@ for kStep in range( nSteps ):
 			if len(indicesAbove.nonzero()[0])!=0:  
 				cMatrix=cMatrix+(csc_Ones-cMatrix).multiply( indicesAbove ) # substract difference to upper bound and we are done
 
-
 	##################################################
 	# update delayedSpikingNeurons
 	# first, we delete what was just processed 
@@ -400,7 +381,6 @@ for kStep in range( nSteps ):
 			delayedSpikingNeurons[ (kStep+b_delaySteps) % numberOfDelayedTimeSteps ]=np.concatenate( (delayedSpikingNeurons[ (kStep+b_delaySteps) % numberOfDelayedTimeSteps ],b_delayInput), axis=0 )
 		if len(c_delayInput)>0:
 			delayedSpikingNeurons[ (kStep+c_delaySteps) % numberOfDelayedTimeSteps ]=np.concatenate( (delayedSpikingNeurons[ (kStep+c_delaySteps) % numberOfDelayedTimeSteps ],c_delayInput), axis=0 )
-
 
 	# update time
 	t+=dt # ms
@@ -425,12 +405,3 @@ functions_sim.genBackup_Files( outputFolder+'/FinalBackup', kStep, v, s, Snoise,
 with open( outputFolder+'/listOfBackupTimeSteps.txt', 'a') as myfile:
 	myfile.write(str(kStep)+' '+'FinalBackup'+'\n')
 	myfile.close()
-
-# print (real) time needed in seconds create 
-#print str(" comput. time (s) "+str(time.time() - start_time) )
-
-
-
-
-
-
