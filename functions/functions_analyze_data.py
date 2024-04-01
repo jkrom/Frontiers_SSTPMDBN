@@ -2309,7 +2309,7 @@ def genFigure_meanweight_theory_vs_sim( dic_plt_results, dic_resultsSim, dic_res
 	# plot horizontal line for initial mean synaptic weight
 	for ax in [ax_single_pulses_d1_intra,ax_single_pulses_d1_inter,ax_bursts_d1_intra,ax_bursts_d1_inter]:
 	    d=0.4
-	    directory = pathSimData + "/initial_networks/seed_10_d_"+str(d)+"_mw_init_0.45"
+	    directory = "data/data_initial_networks/seed_10_d_"+str(d)+"_mw_init_0.45"
 	    path_cMatrix = directory + "/5000_sec/cMatrix.npz"
 	    path_adj = directory    +  "/5000_sec/synConnections.npz"
 	    cMatrix = scipy.sparse.load_npz( path_cMatrix )[:1000,:1000]
@@ -2319,7 +2319,7 @@ def genFigure_meanweight_theory_vs_sim( dic_plt_results, dic_resultsSim, dic_res
 	    
 	for ax in [ax_single_pulses_d2_intra,ax_single_pulses_d2_inter,ax_bursts_d2_intra,ax_bursts_d2_inter]:
 	    d=2.0
-	    directory = pathSimData + "/initial_networks/seed_10_d_"+str(d)+"_mw_init_0.45"
+	    directory = "data/data_initial_networks/seed_10_d_"+str(d)+"_mw_init_0.45"
 	    path_cMatrix = directory + "/5000_sec/cMatrix.npz"
 	    path_adj = directory    +  "/5000_sec/synConnections.npz"
 	    cMatrix = scipy.sparse.load_npz( path_cMatrix )[:1000,:1000]
@@ -2329,7 +2329,7 @@ def genFigure_meanweight_theory_vs_sim( dic_plt_results, dic_resultsSim, dic_res
 	    
 	for ax in [ax_single_pulses_d3_intra,ax_single_pulses_d3_inter,ax_bursts_d3_intra,ax_bursts_d3_inter]:
 	    d=10.0
-	    directory = pathSimData + "/initial_networks/seed_10_d_"+str(d)+"_mw_init_0.45"
+	    directory = "data/data_initial_networks/seed_10_d_"+str(d)+"_mw_init_0.45"
 	    path_cMatrix = directory + "/5000_sec/cMatrix.npz"
 	    path_adj = directory    +  "/5000_sec/synConnections.npz"
 	    cMatrix = scipy.sparse.load_npz( path_cMatrix )[:1000,:1000]
