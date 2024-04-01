@@ -1781,8 +1781,9 @@ def load_estimated_weight_changes( pathToSimResults_getJ, outputToInitialNetwork
 def gen_figure_estimate_J( backupFolder, pathToSimResults_getJ ):
 	
 	# load result array
-	result_array = np.load( backupFolder + "/temp_result_array_Nov20.npy" )
-	
+	# result_array = np.load( backupFolder + "/temp_result_array_Nov20.npy" )
+	result_array = np.load( backupFolder + "/temp_result_array_Dec4.npy" )
+		
 	T1= 5020 # sec
 	T0= 5000 # sec
 

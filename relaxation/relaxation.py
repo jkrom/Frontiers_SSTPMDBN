@@ -29,24 +29,52 @@ TBackupSteps = np.arange(6000, 100100, 200) # sec
 
 ################################################
 # 	1)    load data from stationary state
-# load parameter set it is saved in the parent directory containing the backup directory
+# load parameter set which is saved in the parent directory containing the backup directory
+# the following code was used to run simulation on the computing cluster
 outputFolderTemp=backupDirectory.split('/')
 outputFolder='/'
+loadingSuccess = False 
+
 for direct in outputFolderTemp[1:-1]:
 	outputFolder+=direct+'/'
 if os.path.isfile( outputFolder+'parameterSet.npy' ):
 	system_parameters = np.load( outputFolder+'parameterSet.npy' ).item()
+	loadingSuccess = True
 else:
 	# try:
-	outputFolderTemp=sys.argv[4].split('/')
+	outputFolderTemp2=sys.argv[4].split('/')
 	outputFolderParFile='/'
-	for direct in outputFolderTemp[1:-2]:
+	for direct in outputFolderTemp2[1:-2]:
 		outputFolderParFile+=direct+'/'
 		# print( outputFolderParFile )
 	try:
 		system_parameters = np.load( outputFolderParFile+'parameterSet.npy' ).item()
+		loadingSuccess = True
 	except:
-		print("ERROR: parameterSet.npy not found.")
+		pass
+
+# the following code was used to run simulations on local computer
+if loadingSuccess == False:
+	outputFolder = ''
+	for direct in outputFolderTemp[:-1]:
+		outputFolder+=direct+'/'
+	if os.path.isfile( outputFolder+'parameterSet.npy' ):
+		system_parameters = np.load( outputFolder+'parameterSet.npy' ).item()
+		loadingSuccess = True
+	else:
+		# try:
+		outputFolderTemp2=sys.argv[4].split('/')
+		outputFolderParFile='/'
+		for direct in outputFolderTemp2[:-2]:
+			outputFolderParFile+=direct+'/'
+			# print( outputFolderParFile )
+		try:
+			system_parameters = np.load( outputFolderParFile+'parameterSet.npy' ).item()
+			loadingSuccess = True
+		except:
+			print("ERROR: unable to find parameterSet.npy")
+
+print(outputFolder)
 
 # load backup
 kStepInit, v, s, Snoise, VT, switchOffSpikeTimes, cMatrix, synConnections, STNCenter, GPeCenter, lastSpikeTimeStep, evenPriorLastSpikeTimeStep, npRandomState, delayedSpikingNeurons, numberOfDelayedTimeSteps = functions_sim.startFromBackup( backupDirectory )

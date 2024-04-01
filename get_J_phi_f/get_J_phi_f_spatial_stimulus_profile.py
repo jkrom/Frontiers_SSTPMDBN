@@ -58,12 +58,28 @@ erw = float(sys.argv[10])*dsites
 
 ################################################
 # 	1)    load data from backup
-# load parameter set it is saved in the parent directory containing the backup directory
+# load parameter 
+# it is saved in the parent directory containing the backup directory
+# the following code was used to build outputFolder when running on computation cluster
 outputFolderTemp=backupDirectory.split('/')
 outputFolder='/'
 for direct in outputFolderTemp[1:-1]:
 	outputFolder+=direct+'/'
-system_parameters = np.load( outputFolder+'parameterSet.npy' ).item()
+try:
+	system_parameters = np.load( outputFolder+'parameterSet.npy' ).item()
+except:
+	# if the file path passed to the script as in the default case of main.ipynb, the following
+	# code is used
+	outputFolderTemp = backupDirectory.split('/')
+	# print(outputFolderTemp)
+	outputFolder=''
+	for direct in outputFolderTemp[:-1]:
+		outputFolder+=direct+'/'
+	# print(outputFolder)
+	# exit()
+	print(outputFolder+'parameterSet.npy')
+	system_parameters = np.load( outputFolder+'parameterSet.npy' ).item()
+
 # load backup
 kStepInit, v, s, Snoise, VT, switchOffSpikeTimes, cMatrix, synConnections, STNCenter, GPeCenter, lastSpikeTimeStep, evenPriorLastSpikeTimeStep, npRandomState, delayedSpikingNeurons, numberOfDelayedTimeSteps = functions_sim.startFromBackup( backupDirectory )
 
