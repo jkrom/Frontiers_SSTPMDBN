@@ -17,4 +17,5 @@ and
 GitHub at https://github.com/jkrom/synResPla.
 
 License
-CC-BY-NC-4.0
+This project is licensed under the CC-BY-NC-4.0 License - see the LICENSE file for details.
+
