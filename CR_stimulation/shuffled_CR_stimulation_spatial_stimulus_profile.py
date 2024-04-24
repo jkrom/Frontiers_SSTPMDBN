@@ -150,7 +150,7 @@ nSteps= int( Tmax*1000./dt )
 t=kStepInit*dt
 
 # translate stimulation amplitude
-StimulationAmplitude = ( system_parameters['VTspike'] - system_parameters['Vreset'])*system_parameters['tauSTN'] * Astim
+StimulationAmplitude = ( system_parameters['VTspike'] - system_parameters['Vreset'])*system_parameters['tauSTN']/0.4 * Astim
 
 # times in seconds at which backups are stored
 TbackupArray = np.arange(5200,20100,200)
