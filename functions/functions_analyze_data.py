@@ -1072,7 +1072,7 @@ def gen_Figure_trajectories_Kuramoto_weight( backupDirectory ):
 
 
 		axes_mw[0][kfCR].text( tmin-3500, 0.27,  "$f_{\mathrm{CR}}="+str(int(fCR))+"$ Hz", fontsize = tickFontsize, rotation = 90 )
-		# axes_mw[2][0].legend(loc=0,frameon=False)
+		axes_mw[2][0].legend(loc=0,frameon=False)
 
 	xticks = [5000,6000,7000,8000,9000,10000,11000,12000]
 
@@ -2396,6 +2396,244 @@ def genFigure_meanweight_theory_vs_sim( dic_plt_results, dic_resultsSim, dic_res
 	# fig.savefig( "Fig9.png" , bbox_inches="tight" )
 	# fig.savefig( "Fig9.svg" , bbox_inches="tight" )
 
+
+
+def genFigureSupplement( pathSimData ):
+
+    ticksFontsize = 12
+    labelFontsize = 15
+
+    import matplotlib.pyplot as plt 
+    import matplotlib.gridspec as gridspec
+
+    fig = plt.figure( figsize = (8,3) )
+
+    gs = gridspec.GridSpec(nrows=3, ncols=2, height_ratios=[1, 1, 2])
+
+
+    d_values = [0.4, 2.0, 10.0] # synaptic length scales
+    Astim = 1.0
+    directory = pathSimData + "/shuffled_CR_stimulation/"
+
+    gap = 0.02
+    width = 0.25
+
+    x0  = 0.05
+    x1  = x0 + width
+    x10 = x1 + gap
+    x11 = x10 + width
+    x20 = x11 + gap
+    x21 = x20 + width
+
+    ybRaster = 0.65
+    ytRaster = 0.95
+
+    gs_raster_d1 = gridspec.GridSpec(1, 1)
+    gs_raster_d1.update( left=x0, right=x1, bottom=ybRaster, top=ytRaster )
+    ax_raster_d1 = fig.add_subplot(gs_raster_d1[0,0])
+
+    gs_raster_d2 = gridspec.GridSpec(1, 1)
+    gs_raster_d2.update( left=x10, right=x11, bottom=ybRaster, top=ytRaster )
+    ax_raster_d2 = fig.add_subplot(gs_raster_d2[0,0])
+
+    gs_raster_d3 = gridspec.GridSpec(1, 1)
+    gs_raster_d3.update( left=x20, right=x21, bottom=ybRaster, top=ytRaster )
+    ax_raster_d3 = fig.add_subplot(gs_raster_d3[0,0])
+
+    ybConnectivityDiagram = 0.05
+    ytConnectivityDiagram = 0.55
+
+    gs_connectivityDiagram_d1 = gridspec.GridSpec(1, 1)
+    gs_connectivityDiagram_d1.update( left=x0, right=x1, bottom=ybConnectivityDiagram, top=ytConnectivityDiagram )
+    ax_connectivityDiagram_d1 = fig.add_subplot(gs_connectivityDiagram_d1[0,0])
+
+    gs_connectivityDiagram_d2 = gridspec.GridSpec(1, 1)
+    gs_connectivityDiagram_d2.update( left=x10, right=x11, bottom=ybConnectivityDiagram, top=ytConnectivityDiagram )
+    ax_connectivityDiagram_d2 = fig.add_subplot(gs_connectivityDiagram_d2[0,0])
+
+    gs_connectivityDiagram_d3 = gridspec.GridSpec(1, 1)
+    gs_connectivityDiagram_d3.update( left=x20, right=x21, bottom=ybConnectivityDiagram, top=ytConnectivityDiagram )
+    ax_connectivityDiagram_d3 = fig.add_subplot(gs_connectivityDiagram_d3[0,0])
+
+
+    # generate plots
+    T_plot = 13000 # sec
+
+    par = {}
+    par['Astim'] = 1.0
+    par['fCR'] = 10.0 # Hz
+    par['npb'] = 3
+    par['fStim'] = 21.0 # Hz
+    par["Tshuffle"] = 0.0476 # sec
+
+    ###############################################
+    # d = 0.4
+    par['d'] = 0.4
+
+    backupCmatrixFilename   = "data/data_supplement/supp_"+str(par['d'])+"_cMatrix.npz"
+    backupSTNcenterFilename = "data/data_supplement/supp_"+str(par['d'])+"_STNCenter.npy"
+    backupPlotSpkFilename   = "data/data_supplement/supp_"+str(par['d'])+"_plotSpk.npy"
+
+    if os.path.isfile( backupCmatrixFilename ) and os.path.isfile( backupSTNcenterFilename ) and os.path.isfile( backupPlotSpkFilename ):
+        # load from backup file
+        cMatrix    = scipy.sparse.load_npz( backupCmatrixFilename )
+        STN_center = np.load( backupSTNcenterFilename )
+        plotSpk    = np.load( backupPlotSpkFilename )
+
+    else:
+        # load from simulation data
+        current_directory = pathSimData + "/relaxation_after_shuffled_CR_stimulation/seed_10_d_"+str(par['d'])+"_mw_init_0.45/shuffled_CR_stim_Tshuffle_"+str(par["Tshuffle"])+"_seedSeq_100_fCR_"+str(par['fStim'])+"_M_4_fintra_130.0_npb_3_Astim_"+str(par['Astim'])+"_Tstim_1020.0_seedSeq_100_dsites_0.25_erw_0.25_TstartRelax_6000_sec/"
+
+        cMatrix_filename =    current_directory + "/"+str(T_plot)+"_sec/cMatrix.npz"
+        cMatrix = scipy.sparse.load_npz( cMatrix_filename )
+        scipy.sparse.save_npz( backupCmatrixFilename , cMatrix )
+
+        STN_center_filename = current_directory + "/"+str(T_plot)+"_sec/STNCenter.npy"
+        STN_center = np.load( STN_center_filename )
+        np.save( backupSTNcenterFilename , STN_center )
+
+        spk_filename =        current_directory + "spikeTimes_"+str(T_plot)+"_sec.npy"
+        spk = np.load( spk_filename )
+        Tmin = T_plot-2
+        Tmax = T_plot
+        plotSpk = spk[ np.logical_and( 0.0001*spk[:,1]>Tmin, 0.0001*spk[:,1]<Tmax ) ]
+        np.save( backupPlotSpkFilename, plotSpk )
+
+    ax_raster_d1.scatter(  0.0001*plotSpk[:,1] ,  STN_center[ plotSpk[:,0].astype(int) ], s=0.01, color = "black")   
+
+    x = STN_center[ np.nonzero( cMatrix )[0] ]
+    y = STN_center[ np.nonzero( cMatrix )[1] ]
+    z = np.array( cMatrix[ np.nonzero( cMatrix )[0] , np.nonzero( cMatrix )[1] ] )[0]
+
+    ax_connectivityDiagram_d1.scatter( y, x, c = z, cmap="gray_r",  vmin=0, vmax=1, s = 0.01 )
+
+
+    ###############################################
+    # d = 2.0
+    par['d'] = 2.0
+
+    backupCmatrixFilename   = "data/data_supplement/supp_"+str(par['d'])+"_cMatrix.npz"
+    backupSTNcenterFilename = "data/data_supplement/supp_"+str(par['d'])+"_STNCenter.npy"
+    backupPlotSpkFilename   = "data/data_supplement/supp_"+str(par['d'])+"_plotSpk.npy"
+
+    if os.path.isfile( backupCmatrixFilename ) and os.path.isfile( backupSTNcenterFilename ) and os.path.isfile( backupPlotSpkFilename ):
+        # load from backup file
+        cMatrix    = scipy.sparse.load_npz( backupCmatrixFilename )
+        STN_center = np.load( backupSTNcenterFilename )
+        plotSpk    = np.load( backupPlotSpkFilename )
+
+    else:
+        # load from simulation data
+        current_directory = pathSimData + "/relaxation_after_shuffled_CR_stimulation/seed_10_d_"+str(par['d'])+"_mw_init_0.45/shuffled_CR_stim_Tshuffle_"+str(par["Tshuffle"])+"_seedSeq_100_fCR_"+str(par['fStim'])+"_M_4_fintra_130.0_npb_3_Astim_"+str(par['Astim'])+"_Tstim_1020.0_seedSeq_100_dsites_0.25_erw_0.25_TstartRelax_6000_sec/"
+
+        cMatrix_filename =    current_directory + "/"+str(T_plot)+"_sec/cMatrix.npz"
+        cMatrix = scipy.sparse.load_npz( cMatrix_filename )
+        scipy.sparse.save_npz( backupCmatrixFilename , cMatrix )
+
+        STN_center_filename = current_directory + "/"+str(T_plot)+"_sec/STNCenter.npy"
+        STN_center = np.load( STN_center_filename )
+        np.save( backupSTNcenterFilename , STN_center )
+
+        spk_filename =        current_directory + "spikeTimes_"+str(T_plot)+"_sec.npy"
+        spk = np.load( spk_filename )
+        Tmin = T_plot-2
+        Tmax = T_plot
+        plotSpk = spk[ np.logical_and( 0.0001*spk[:,1]>Tmin, 0.0001*spk[:,1]<Tmax ) ]
+        np.save( backupPlotSpkFilename, plotSpk )
+
+    ax_raster_d2.scatter(  0.0001*plotSpk[:,1] ,  STN_center[ plotSpk[:,0].astype(int) ], s=0.01, color = "black")   
+
+    x = STN_center[ np.nonzero( cMatrix )[0] ]
+    y = STN_center[ np.nonzero( cMatrix )[1] ]
+    z = np.array( cMatrix[ np.nonzero( cMatrix )[0] , np.nonzero( cMatrix )[1] ] )[0]
+
+    ax_connectivityDiagram_d2.scatter( y, x, c = z, cmap="gray_r",  vmin=0, vmax=1, s = 0.01 )
+
+
+
+    ###############################################
+    # d = 10.0
+    par['d'] = 10.0
+
+    backupCmatrixFilename   = "data/data_supplement/supp_"+str(par['d'])+"_cMatrix.npz"
+    backupSTNcenterFilename = "data/data_supplement/supp_"+str(par['d'])+"_STNCenter.npy"
+    backupPlotSpkFilename   = "data/data_supplement/supp_"+str(par['d'])+"_plotSpk.npy"
+
+    if os.path.isfile( backupCmatrixFilename ) and os.path.isfile( backupSTNcenterFilename ) and os.path.isfile( backupPlotSpkFilename ):
+        # load from backup file
+        cMatrix    = scipy.sparse.load_npz( backupCmatrixFilename )
+        STN_center = np.load( backupSTNcenterFilename )
+        plotSpk    = np.load( backupPlotSpkFilename )
+
+    else:
+        # load from simulation data
+        current_directory = pathSimData + "/relaxation_after_shuffled_CR_stimulation/seed_10_d_"+str(par['d'])+"_mw_init_0.45/shuffled_CR_stim_Tshuffle_"+str(par["Tshuffle"])+"_seedSeq_100_fCR_"+str(par['fStim'])+"_M_4_fintra_130.0_npb_3_Astim_"+str(par['Astim'])+"_Tstim_1020.0_seedSeq_100_dsites_0.25_erw_0.25_TstartRelax_6000_sec/"
+
+        cMatrix_filename =    current_directory + "/"+str(T_plot)+"_sec/cMatrix.npz"
+        cMatrix = scipy.sparse.load_npz( cMatrix_filename )
+        scipy.sparse.save_npz( backupCmatrixFilename , cMatrix )
+
+        STN_center_filename = current_directory + "/"+str(T_plot)+"_sec/STNCenter.npy"
+        STN_center = np.load( STN_center_filename )
+        np.save( backupSTNcenterFilename , STN_center )
+
+        spk_filename =        current_directory + "spikeTimes_"+str(T_plot)+"_sec.npy"
+        spk = np.load( spk_filename )
+        Tmin = T_plot-2
+        Tmax = T_plot
+        plotSpk = spk[ np.logical_and( 0.0001*spk[:,1]>Tmin, 0.0001*spk[:,1]<Tmax ) ]
+        np.save( backupPlotSpkFilename, plotSpk )
+
+    ax_raster_d3.scatter(  0.0001*plotSpk[:,1] ,  STN_center[ plotSpk[:,0].astype(int) ], s=0.01, color = "black")   
+
+    x = STN_center[ np.nonzero( cMatrix )[0] ]
+    y = STN_center[ np.nonzero( cMatrix )[1] ]
+    z = np.array( cMatrix[ np.nonzero( cMatrix )[0] , np.nonzero( cMatrix )[1] ] )[0]
+
+    ax_connectivityDiagram_d3.scatter( y, x, c = z, cmap="gray_r",  vmin=0, vmax=1, s = 0.01 )
+
+
+
+    for axRaster in [ax_raster_d1,ax_raster_d2,ax_raster_d3]: 
+        axRaster.set_yticks([-2.5,2.5])
+        axRaster.set_yticklabels(["",""])
+
+        axRaster.set_frame_on(False)
+        axRaster.get_yaxis().tick_left()
+
+        axRaster.plot([T_plot-0.2,T_plot-0.1],[-2.65,-2.65], lw=3, color="black")
+
+        axRaster.set_xticks([])
+
+        axRaster.set_ylim(-2.8,2.6)
+
+    ax_raster_d1.set_yticklabels(["$0$","$L$"], fontsize = ticksFontsize )
+
+
+    for axCon in [ax_connectivityDiagram_d1,ax_connectivityDiagram_d2,ax_connectivityDiagram_d3]:
+        axCon.set_aspect(1.0)
+
+        axCon.set_xticks([-2.5,2.5])
+        axCon.set_xticklabels(["$0$","$L$"], fontsize = ticksFontsize )
+
+        axCon.set_yticks([-2.5,2.5])
+        axCon.set_yticklabels(["$0$","$L$"], fontsize = ticksFontsize )
+
+        axCon.set_xlim(-2.5,2.5)
+        axCon.set_ylim(-2.5,2.5)
+
+        axCon.set_xlabel("$x_{\mathrm{pre}}$", fontsize = labelFontsize, labelpad = -10 )
+        axCon.set_ylabel("$x_{\mathrm{post}}$", fontsize = labelFontsize, labelpad = -10 )
+
+    ax_raster_d1.text( T_plot-2.6, 2.6, "A", fontsize = 1.2*labelFontsize  )
+    ax_raster_d2.text( T_plot-2.4, 2.6, "B", fontsize = 1.2*labelFontsize  )
+    ax_raster_d3.text( T_plot-2.4, 2.6, "C", fontsize = 1.2*labelFontsize  )
+
+    ax_connectivityDiagram_d1.text( -4.5, 2.6, "A'", fontsize = 1.2*labelFontsize  )
+    ax_connectivityDiagram_d2.text( -4.3, 2.6, "B'", fontsize = 1.2*labelFontsize  )
+    ax_connectivityDiagram_d3.text( -4.3, 2.6, "C'", fontsize = 1.2*labelFontsize  )
+
+    return fig 
 
 
 if __name__ == "__main__":
