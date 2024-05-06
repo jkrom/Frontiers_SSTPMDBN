@@ -2384,12 +2384,12 @@ def genFigure_meanweight_theory_vs_sim( dic_plt_results, dic_resultsSim, dic_res
 	ax_single_pulses_d3_intra.text(2,1,"C", fontsize = 1.1*labelFontsize)
 	ax_single_pulses_d3_inter.text(2,1,"C'", fontsize = 1.1*labelFontsize)
 
-	ax_bursts_d1_intra.text(0.5,1,"E", fontsize = 1.1*labelFontsize)
-	ax_bursts_d1_inter.text(0.5,1,"E'", fontsize = 1.1*labelFontsize)
-	ax_bursts_d2_intra.text(2,1,"F", fontsize = 1.1*labelFontsize)
-	ax_bursts_d2_inter.text(2,1,"F'", fontsize = 1.1*labelFontsize)
-	ax_bursts_d3_intra.text(2,1,"G", fontsize = 1.1*labelFontsize)
-	ax_bursts_d3_inter.text(2,1,"G'", fontsize = 1.1*labelFontsize)
+	ax_bursts_d1_intra.text(0.5,1,"D", fontsize = 1.1*labelFontsize)
+	ax_bursts_d1_inter.text(0.5,1,"D'", fontsize = 1.1*labelFontsize)
+	ax_bursts_d2_intra.text(2,1,"E", fontsize = 1.1*labelFontsize)
+	ax_bursts_d2_inter.text(2,1,"E'", fontsize = 1.1*labelFontsize)
+	ax_bursts_d3_intra.text(2,1,"F", fontsize = 1.1*labelFontsize)
+	ax_bursts_d3_inter.text(2,1,"F'", fontsize = 1.1*labelFontsize)
 
 	return fig 
 	# fig.savefig( "Fig9.pdf" , bbox_inches="tight" )
