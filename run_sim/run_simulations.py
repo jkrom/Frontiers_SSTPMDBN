@@ -411,7 +411,7 @@ def run_or_cont_simulations_shuffled_CR_stimulation_Results_1_relaxation( pathTo
     # time for backup from which relaxation is started in seconds
     TstartRelax = 6000 # sec
     # time after cessation of stimulation that is simulated
-    Trelax = 4020 # sec
+    Trelax = 14020 # sec
 
     # loop over seeds, mean weights and d_values
     for seed in seed_array:
@@ -444,7 +444,7 @@ def run_or_cont_simulations_shuffled_CR_stimulation_Results_1_relaxation( pathTo
 
                             # no backup found, new simulation
                             if lastBackup == '':
-                                Trelax = 4020 # sec
+                                Trelax = 14020 # sec
                                 backupDirectory = outputToInitialNetworks+ "/seed_"+str(seed)+"_d_"+str(d)+"_mw_init_"+str(mw)+"/shuffled_CR_stim_Tshuffle_"+str(Tshuffle)+"_seedSeq_"+str(seedSequence)+"_fCR_"+str(fCR)+"_M_4_fintra_"+str(fintra)+"_npb_"+str(nPulse)+"_Astim_"+str(Astim)+"_Tstim_"+str(Tstim)+"_seedSeq_"+str(seedSequence)+"_dsites_"+str(dsites)+"_erw_"+str(erw)+"/"+str(TstartRelax)+"_sec"   
                                 backupPar = backupDirectory
                             else:
