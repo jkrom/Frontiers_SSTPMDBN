@@ -27,7 +27,7 @@ outputParentDirectory=sys.argv[8]
 # stimulation parameters
 # Stimulation amplitude (should be between 0 and 1). This corresponds 
 # to A in Equation 8.
-Astim=float(sys.argv[2])     
+Astim=float(sys.argv[2]) # corresponds to 2.5*Astim    
 # CR frequency in Hz
 fCR=float(sys.argv[3])	# Hz
 # number of pulses per stimulus (set to one for single-pulse stimuli)
