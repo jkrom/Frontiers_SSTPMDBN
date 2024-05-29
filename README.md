@@ -2,9 +2,8 @@
 
 The code in this repository can be used to simulated coordinated reset stimulation in networks of leaky integrate-and-fire neurons with spike-timing-dependent plasticity. Simulation results are presented in the following manuscript:
 
-Kromer, J.A. and Tass, P.A. (2024) _Coordinated Reset Stimulation of Plastic
-Neural Networks with Spatially Dependent Synaptic Connections_. Manuscript submitted for publication.
-(reference will be updated after publication)
+Kromer, J.A. and Tass, P.A. (2024), Coordinated reset stimulation of plastic neural networks with
+spatially dependent synaptic connections. _Frontiers in Network Physiology_ 4:1351815. doi: 10.3389/fnetp.2024.1351815
 
 To reproduce the simulation results in the manuscirpt run _main.ipynb_.
 
